@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+
+  backend-server:
+    build: ../server
+    container_name: backend-server
+    restart: always
+    env_file:
+      - ../server/.env
+    volumes:
+      - ../server:/app
+    ports:
+      - 8020:8000
+
+  mongo-db:
+    image: mongo:latest
+    container_name: mongo-db
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - 27017:27017
+
+  dozzle:
+    container_name: log-viewer
+    image: amir20/dozzle:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 8080:8080
+
+volumes:
+  mongo-data:
+
+networks:
+  default:
+    driver: bridge
